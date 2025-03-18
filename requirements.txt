@@ -35,3 +35,4 @@ django-jazzmin
 matplotlib
 seaborn
 whitenoise
+
