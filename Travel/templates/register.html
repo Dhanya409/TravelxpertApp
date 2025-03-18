@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center text-white animate__animated animate__fadeIn">
+                    <h1 class="display-4 fw-bold">Create an Account</h1>
+                    <p class="lead">Begin your journey with us today</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInUp">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold">Register</h2>
+                        <p class="text-muted">Fill in your details to create an account</p>
+                    </div>
+
+                    {% if messages %}
+                        <div class="messages mb-4">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control rounded-3" name="first_name" id="first_name" 
+                                           value="{{ request.POST.first_name|default:'' }}" placeholder="First Name" required>
+                                    <label for="first_name"><i class="fas fa-user me-2"></i>First Name</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control rounded-3" name="last_name" id="last_name" 
+                                           value="{{ request.POST.last_name|default:'' }}" placeholder="Last Name" required>
+                                    <label for="last_name"><i class="fas fa-user me-2"></i>Last Name</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-3" name="username" id="username" 
+                                   value="{{ request.POST.username|default:'' }}" placeholder="Username" required>
+                            <label for="username"><i class="fas fa-at me-2"></i>Username</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control rounded-3" name="email" id="email" 
+                                   value="{{ request.POST.email|default:'' }}" placeholder="Email" required>
+                            <label for="email"><i class="fas fa-envelope me-2"></i>Email</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-3" name="password" id="password"
+                                   placeholder="Password" required>
+                            <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                            <div class="password-toggle position-absolute end-0 top-50 translate-middle-y me-3">
+                                <i class="far fa-eye-slash toggle-password" style="cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        <div class="password-strength mb-3">
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block">
+                                Password must contain at least 8 characters with uppercase, lowercase, numbers, and special characters
+                            </small>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control rounded-3" name="confirm_password" id="confirm_password"
+                                   placeholder="Confirm Password" required>
+                            <label for="confirm_password"><i class="fas fa-lock me-2"></i>Confirm Password</label>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 hover-lift">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="mb-0">Already have an account? 
+                                <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">
+                                    Login here
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional CSS -->
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    .password-toggle {
+        cursor: pointer;
+        z-index: 5;
+    }
+    .password-strength .progress-bar {
+        transition: width 0.3s ease;
+    }
+</style>
+
+<!-- Additional JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password visibility toggle
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordInput = document.querySelector('#password');
+    
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+    
+    // Password strength indicator
+    const strengthBar = document.querySelector('.progress-bar');
+    if (passwordInput && strengthBar) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength += 25;
+            if (password.match(/[A-Z]/)) strength += 25;
+            if (password.match(/[0-9]/)) strength += 25;
+            if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+            
+            strengthBar.style.width = strength + '%';
+            
+            if (strength <= 25) {
+                strengthBar.className = 'progress-bar bg-danger';
+            } else if (strength <= 50) {
+                strengthBar.className = 'progress-bar bg-warning';
+            } else if (strength <= 75) {
+                strengthBar.className = 'progress-bar bg-info';
+            } else {
+                strengthBar.className = 'progress-bar bg-success';
+            }
+        });
+    }
+
+    // Password confirmation validation
+    const confirmPassword = document.querySelector('#confirm_password');
+    if (confirmPassword && passwordInput) {
+        confirmPassword.addEventListener('input', function() {
+            if (this.value !== passwordInput.value) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    
+    // Add floating label animation
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', () => {
+            if (!input.value) {
+                input.parentElement.classList.remove('focused');
+            }
+        });
+    });
+});
+</script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}

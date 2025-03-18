@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2 class="mb-0">
+                <i class="fas fa-book-open text-primary me-2"></i>Travel Diaries
+            </h2>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'create_diary' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Diary
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% for diary in diaries %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="position-relative">
+                    {% if diary.images.first %}
+                    <img src="{{ diary.images.first.image.url }}" class="card-img-top" alt="Diary Cover Image" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light text-center py-5" style="height: 200px;">
+                        <i class="fas fa-images fa-3x text-muted"></i>
+                        <p class="text-muted mt-2">No images</p>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 m-2">
+                        {% if diary.visibility == 'public' %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-globe"></i> Public
+                        </span>
+                        {% else %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-lock"></i> Private
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title text-primary">{{ diary.title }}</h5>
+                        {% if diary.user == request.user %}
+                        <div>
+                            <a href="{% url 'edit_diary' diary.pk %}" class="text-warning me-2" style="font-size: 1.1rem;" title="Edit Diary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" onclick="confirmDelete('{{ diary.title }}', '{% url 'delete_diary' diary.pk %}')" class="text-danger" style="font-size: 1.1rem;" title="Delete Diary">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-2 text-muted">
+                        <small>
+                            <i class="fas fa-map-marker-alt"></i> {{ diary.location }}
+                        </small>
+                    </div>
+                    <p class="card-text text-muted">{{ diary.content|truncatewords:30 }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle text-muted"></i>
+                            <small class="text-muted ms-1">{{ diary.user.username }}</small>
+                            <small class="text-muted ms-2">
+                                <i class="far fa-calendar"></i> {{ diary.travel_date|date:"M d, Y" }}
+                            </small>
+                        </div>
+                        <a href="{% url 'diary_detail' diary.pk %}" class="btn btn-sm btn-outline-primary">
+                            View Details <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5">
+                <i class="fas fa-book fa-3x mb-3"></i>
+                <h4>No travel diaries found</h4>
+                <p class="mb-3">Start documenting your adventures!</p>
+                <a href="{% url 'create_diary' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Your First Diary
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete "<span id="diaryTitle"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(title, url) {
+    document.getElementById('diaryTitle').textContent = title;
+    document.getElementById('deleteForm').action = url;
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+</script>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.text-warning:hover, .text-danger:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+</style>
+{% endblock %}

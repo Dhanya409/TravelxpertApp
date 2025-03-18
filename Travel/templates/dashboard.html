@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 text-white text-center mb-3">My Dashboard</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- User Profile Section -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h4>{{ request.user.get_full_name|default:request.user.username }}</h4>
+                    {% if user_profile %}
+                        <p class="text-muted mb-1">{{ user_profile.phone }}</p>
+                        <p class="text-muted">{{ user_profile.address }}</p>
+                    {% endif %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-key"></i> Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-primary text-white shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50">Total Bookings</h6>
+                                    <h2 class="mb-0">{{ bookings.count }}</h2>
+                                </div>
+                                <i class="fas fa-ticket-alt fa-3x text-white-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-success text-white shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-white-50">Total Spent</h6>
+                                    <h2 class="mb-0">₹{{ total_spent|floatformat:2 }}</h2>
+                                </div>
+                                <i class="fas fa-rupee-sign fa-3x text-white-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Trips Section -->
+    <div class="mb-5">
+        <h3 class="mb-4"><i class="fas fa-plane-departure text-primary"></i> Upcoming Trips</h3>
+        {% if upcoming_trips %}
+            <div class="row">
+                {% for booking in upcoming_trips %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">{{ booking.tour_package.name }}</h5>
+                                    <span class="badge bg-primary">{{ booking.tour_package.start_date|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt"></i> {{ booking.tour_package.location }}
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-users"></i> {{ booking.passengers.count }} Passengers
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-rupee-sign"></i> {{ booking.total_amount|floatformat:2 }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    {% if booking.tour_package.id %}
+                                        <a href="{% url 'package_detail' booking.tour_package.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    {% endif %}
+                                    <span class="text-success">
+                                        <i class="fas fa-check-circle"></i> Confirmed
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No upcoming trips found.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Past Trips Section -->
+    <div>
+        <h3 class="mb-4"><i class="fas fa-plane-arrival text-primary"></i> Past Trips</h3>
+        {% if completed_trips %}
+            <div class="row">
+                {% for booking in completed_trips %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">{{ booking.tour_package.name }}</h5>
+                                    <span class="badge bg-secondary">{{ booking.tour_package.end_date|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt"></i> {{ booking.tour_package.location }}
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-users"></i> {{ booking.passengers.count }} Passengers
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-rupee-sign"></i> {{ booking.total_amount|floatformat:2 }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="#" class="btn btn-outline-secondary btn-sm">View Details</a>
+                                    <span class="text-muted">
+                                        <i class="fas fa-check-circle"></i> Completed
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No past trips found.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.hero-header {
+    background: linear-gradient(rgba(20, 20, 31, .7), rgba(20, 20, 31, .7)),
+                url("{% static 'img/bg-hero.jpg' %}");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.text-primary {
+    color:rgb(7, 7, 7) !important;
+}
+
+.bg-primary {
+    background-color:rgb(107, 209, 241) !important;
+}
+
+.btn-primary {
+    background-color: #fc5e28;
+    border-color: #fc5e28;
+}
+
+.btn-primary:hover {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.btn-outline-primary {
+    color: #fc5e28;
+    border-color: #fc5e28;
+}
+
+.btn-outline-primary:hover {
+    background-color: #fc5e28;
+    border-color: #fc5e28;
+}
+</style>
+
+{% endblock %}

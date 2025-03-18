@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'diary_list' %}">Travel Diaries</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create New Diary</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Create New Travel Diary</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ diary_form.title.id_for_label }}" class="form-label">Title</label>
+                    {{ diary_form.title }}
+                    {% if diary_form.title.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ diary_form.title.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ diary_form.location.id_for_label }}" class="form-label">Location</label>
+                    {{ diary_form.location }}
+                    {% if diary_form.location.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ diary_form.location.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ diary_form.travel_date.id_for_label }}" class="form-label">Travel Date</label>
+                    {{ diary_form.travel_date }}
+                    {% if diary_form.travel_date.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ diary_form.travel_date.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ diary_form.content.id_for_label }}" class="form-label">Content</label>
+                    {{ diary_form.content }}
+                    {% if diary_form.content.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ diary_form.content.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ diary_form.visibility.id_for_label }}" class="form-label">Visibility</label>
+                    {{ diary_form.visibility }}
+                    {% if diary_form.visibility.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ diary_form.visibility.errors }}
+                    </div>
+                    {% endif %}
+                    <div class="form-text">
+                        Public diaries can be viewed by all users. Private diaries are only visible to you.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ image_form.image.id_for_label }}" class="form-label">Photos</label>
+                    {{ image_form.image }}
+                    {% if image_form.image.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ image_form.image.errors }}
+                    </div>
+                    {% endif %}
+                    <div class="form-text">
+                        Select photos to upload. You can add multiple photos one at a time.
+                    </div>
+                    <div id="selected-images" class="mt-2">
+                        <!-- Selected images will be displayed here -->
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ image_form.caption.id_for_label }}" class="form-label">Caption (for photos)</label>
+                    {{ image_form.caption }}
+                </div>
+
+                <div class="text-end">
+                    <a href="{% url 'diary_list' %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create Diary
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const selectedImagesDiv = document.getElementById('selected-images');
+    const form = document.querySelector('form');
+
+    // Handle file selection
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        
+        files.forEach(file => {
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('div');
+                preview.className = 'mb-2';
+                preview.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                    <br>
+                    <small class="text-muted">${file.name}</small>
+                `;
+                selectedImagesDiv.appendChild(preview);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Clone the file input for the next selection
+        const newInput = imageInput.cloneNode(true);
+        imageInput.parentNode.replaceChild(newInput, imageInput);
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        // Get all file inputs
+        const fileInputs = form.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            if (input.files.length > 0) {
+                formData.append('image', input.files[0]);
+            }
+        });
+
+        // Submit the form
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.open();
+            document.write(html);
+            document.close();
+        });
+    });
+});
+
+// Function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,427 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Assistant Chatbot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+        
+        .chat-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 70vh;
+        }
+        
+        .chat-history {
+            flex: 0 0 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            display: none;
+        }
+        
+        @media (min-width: 992px) {
+            .chat-history {
+                display: block;
+            }
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .user {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+        
+        .bot {
+            align-self: flex-start;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border-bottom-left-radius: 0;
+        }
+        
+        .input-area {
+            padding: 15px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .send-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .send-button i {
+            margin-left: 5px;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 10px;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--light-color);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .history-item:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .history-query {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .history-response {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .travel-tip {
+            background-color: #FFF9C4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .travel-tip h3 {
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .travel-tip p {
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .loading-indicator {
+            display: none;
+            align-self: center;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: var(--light-color);
+            border-radius: 20px;
+            color: var(--dark-color);
+            font-weight: bold;
+        }
+        
+        .loading-indicator i {
+            margin-right: 8px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .welcome-message {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px 20px;
+        }
+        
+        .welcome-message h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .welcome-message p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .example-queries {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .example-query {
+            background-color: var(--light-color);
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .example-query:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-plane-departure"></i> Travel Assistant</h1>
+            <p>Ask me anything about travel destinations, flights, hotels, and more!</p>
+        </div>
+        
+        <div class="travel-tip">
+            <h3><i class="fas fa-lightbulb"></i> Travel Tip</h3>
+            <p>I'm designed to answer travel-related questions only. Ask me about destinations, flights, hotels, visa requirements, local attractions, and more!</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-box">
+                <div id="messages-container" class="messages">
+                    <div class="welcome-message">
+                        <h2>Welcome to Travel Assistant!</h2>
+                        <p>I'm here to help with all your travel-related questions and needs.</p>
+                        <p>What would you like to know about your next adventure?</p>
+                        
+                        <div class="example-queries">
+                            <div class="example-query" onclick="setQuery('What are the top destinations to visit in 2025?')">Top destinations for 2025</div>
+                            <div class="example-query" onclick="setQuery('How can I find cheap flights to Europe?')">Cheap flights to Europe</div>
+                            <div class="example-query" onclick="setQuery('What documents do I need for traveling to Japan?')">Travel documents for Japan</div>
+                            <div class="example-query" onclick="setQuery('Best time to visit Bali?')">Best time for Bali</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="loading" class="loading-indicator">
+                    <i class="fas fa-circle-notch"></i> Thinking...
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="message-input" class="message-input" placeholder="Ask a travel question..." autocomplete="off">
+                    <button id="send-button" class="send-button">Send <i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            
+            <div class="chat-history">
+                <h2 class="history-title">Recent Conversations</h2>
+                {% if recent_chats %}
+                    {% for chat in recent_chats %}
+                        <div class="history-item" onclick="setQuery('{{ chat.user_query|escapejs }}')">
+                            <div class="history-query">{{ chat.user_query|truncatechars:30 }}</div>
+                            <div class="history-response">{{ chat.bot_response|truncatechars:40 }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="history-item">
+                        <div class="history-query">No recent conversations</div>
+                        <div class="history-response">Start chatting to see your history</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const messagesContainer = document.getElementById('messages-container');
+            const loadingIndicator = document.getElementById('loading');
+            
+            // Function to send message
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to the chat
+                addMessage(message, 'user');
+                messageInput.value = '';
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                
+                // Send message to the server
+                fetch('{% url "travel_chatbot:chat_api" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Add bot response to the chat
+                    addMessage(data.response, 'bot');
+                })
+                .catch(error => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Add error message
+                    addMessage('Sorry, there was an error processing your request. Please try again.', 'bot');
+                    console.error('Error:', error);
+                });
+            }
+            
+            // Function to add a message to the chat
+            function addMessage(text, sender) {
+                // Remove welcome message if it exists
+                const welcomeMessage = document.querySelector('.welcome-message');
+                if (welcomeMessage) {
+                    welcomeMessage.remove();
+                }
+                
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', sender);
+                
+                // Process line breaks and URLs in the text
+                const formattedText = text
+                    .replace(/\n/g, '<br>')
+                    .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+                
+                messageElement.innerHTML = formattedText;
+                messagesContainer.appendChild(messageElement);
+                
+                // Scroll to the bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Focus input on page load
+            messageInput.focus();
+        });
+        
+        // Function to set query from history or example
+        function setQuery(query) {
+            const messageInput = document.getElementById('message-input');
+            messageInput.value = query;
+            messageInput.focus();
+        }
+    </script>
+</body>
+</html>

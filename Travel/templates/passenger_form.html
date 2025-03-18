@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Passenger Details</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="id_full_name">Full Name</label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}
+                                <div class="alert alert-danger">{{ form.full_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="id_email">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="alert alert-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="id_phone">Phone Number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <div class="alert alert-danger">{{ form.phone.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="id_date_of_birth">Date of Birth</label>
+                            {{ form.date_of_birth }}
+                            {% if form.date_of_birth.errors %}
+                                <div class="alert alert-danger">{{ form.date_of_birth.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="id_passport_number">Passport Number</label>
+                            {{ form.passport_number }}
+                            {% if form.passport_number.errors %}
+                                <div class="alert alert-danger">{{ form.passport_number.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="id_passport_file">Passport Copy</label>
+                            {{ form.passport_file }}
+                            <small class="form-text text-muted">Upload a clear copy of your passport (PDF, JPG, JPEG, or PNG format, max 5MB)</small>
+                            {% if form.passport_file.errors %}
+                                <div class="alert alert-danger">{{ form.passport_file.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .form-control {
+        border-radius: 5px;
+    }
+    .alert {
+        margin-top: 5px;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+    .btn-primary {
+        padding: 10px 30px;
+    }
+</style>
+{% endblock %}

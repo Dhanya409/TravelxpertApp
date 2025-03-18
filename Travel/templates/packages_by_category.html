@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 text-center">
+                <h1 class="mb-4 bread text-white mt-4" >{{ category_group }}</h1>
+                <h2 class="mb-4 bread text-white">{{ category_display_name }}</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        {% if packages %}
+        <div class="row">
+            {% for package in packages %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if package.image %}
+                        <img src="{{ package.image.url }}" class="card-img-top" alt="{{ package.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_package.jpg' %}" class="card-img-top" alt="{{ package.name }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ package.name }}</h5>
+                        <p class="card-text text-muted">{{ package.duration }}</p>
+                        <p class="card-text">{{ package.description|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="price">₹{{ package.price }}</h6>
+                            <a href="{% url 'package_detail' package.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-alt"></i> {{ package.start_date|date:"d M Y" }} - {{ package.end_date|date:"d M Y" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h3>No packages available in this category at the moment.</h3>
+                <p>Please check back later or explore other categories.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

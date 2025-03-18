@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header custom-bg text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-suitcase me-2"></i>My Bookings
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if booking_data %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Package</th>
+                                        <th>Flight Details</th>
+                                        <th>Travel Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in booking_data %}
+                                        <tr>
+                                            <td>#{{ item.booking.id }}</td>
+                                            <td>
+                                                <strong>{{ item.booking.tour_package.name }}</strong><br>
+                                                <small class="text-muted">{{ item.booking.tour_package.location }}</small>
+                                            </td>
+                                            <td>
+                                                {{ item.booking.flight.airline }} {{ item.booking.flight.flight_number }}<br>
+                                                <small class="text-muted">
+                                                    {{ item.booking.flight.departure_city }} → {{ item.booking.flight.arrival_city }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                {{ item.booking.flight.departure_date }}<br>
+                                                <small class="text-muted">{{ item.booking.flight.departure_time }}</small>
+                                            </td>
+                                            <td>
+                                                {% if item.payment %}
+                                                    ₹{{ item.payment.amount|floatformat:2 }}
+                                                {% else %}
+                                                    Pending
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ item.status_class }}">
+                                                    {{ item.booking.booking_status|title }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    {% if item.booking.booking_status == 'confirmed' %}
+                                                        <a href="{% url 'download_ticket' item.booking.id %}" 
+                                                           class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-ticket-alt"></i> Ticket
+                                                        </a>
+                                                        {% if item.payment %}
+                                                            <a href="{% url 'view_bill' item.booking.id item.payment.id %}" 
+                                                               class="btn btn-sm btn-outline-info">
+                                                                <i class="fas fa-file-invoice"></i> Bill
+                                                            </a>
+                                                        {% endif %}
+                                                       
+                                                    {% elif item.booking.booking_status == 'pending' %}
+                                                        <a href="{% url 'payment' item.booking.id %}" 
+                                                           class="btn btn-sm btn-warning">
+                                                            <i class="fas fa-credit-card"></i> Pay Now
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if item.booking.booking_status != 'cancelled' %}
+                                                        <a href="{% url 'cancel_booking' item.booking.id %}" 
+                                                           class="btn btn-sm btn-outline-danger"
+                                                           onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                                            <i class="fas fa-times"></i> Cancel
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                            <h5>No Bookings Found</h5>
+                            <p class="text-muted">You haven't made any bookings yet.</p>
+                            <a href="{% url 'packages' %}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Browse Tour Packages
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table td {
+    vertical-align: middle;
+}
+.btn-group .btn {
+    margin-right: 5px;
+}
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+.custom-bg {
+    background-color:rgb(144, 201, 239); 
+}
+
+</style>
+{% endblock %}

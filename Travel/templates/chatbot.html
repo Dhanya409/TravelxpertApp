@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Travel Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 10px; background-color: #f4f4f4; }
+        h1 { text-align: center; }
+        #chatbox { width: 80%; max-width: 500px; margin: auto; padding: 10px; background: white; border-radius: 10px; box-shadow: 2px 2px 10px gray; }
+        .message { margin: 10px 0; }
+        .user { color: blue; font-weight: bold; }
+        .bot { color: green; font-weight: bold; }
+        input { width: 70%; padding: 8px; margin-top: 10px; }
+        button { padding: 8px; background: blue; color: white; border: none; cursor: pointer; }
+        button:hover { background: darkblue; }
+    </style>
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById('message').value;
+            if (userMessage.trim() === '') return;
+
+            fetch('/chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: 'message=' + encodeURIComponent(userMessage)
+            })
+            .then(response => response.json())
+            .then(data => {
+                var chatbox = document.getElementById('chatbox');
+                chatbox.innerHTML += `<p class='message'><span class='user'>User:</span> ${userMessage}</p>`;
+                chatbox.innerHTML += `<p class='message'><span class='bot'>Bot:</span> ${data.reply}</p>`;
+                document.getElementById('message').value = '';
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Travel Chatbot</h1>
+    <div id="chatbox"></div>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" id="message" placeholder="Type your message here...">
+        <button type="button" onclick="sendMessage()">Send</button>
+    </form>
+</body>
+</html>

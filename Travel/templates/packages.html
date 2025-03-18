@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">
+        <i class="fas fa-map-marked-alt"></i> Tour Packages
+    </h2>
+    
+    <div class="row">
+        {% for package in packages %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if package.image %}
+                <img src="{{ package.image.url }}" class="card-img-top" alt="{{ package.name }}">
+                {% else %}
+                <img src="{% static 'images/default-package.jpg' %}" class="card-img-top" alt="{{ package.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ package.name }}</h5>
+                    <p class="card-text text-muted">{{ package.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h5 text-primary mb-0">₹{{ package.price }}</span>
+                        <span class="badge bg-info">{{ package.duration }} Days</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ package.destination }}
+                        </small>
+                        <a href="{% url 'package_detail' package.id %}" class="btn btn-outline-primary btn-sm">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No tour packages available at the moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

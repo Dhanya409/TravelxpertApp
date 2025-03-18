@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Submit Review for Booking #{{ booking.id }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Tour Package: {{ booking.tour_package.name }}</h5>
+                            <p class="text-muted">{{ booking.tour_package.description|truncatewords:30 }}</p>
+                        </div>
+
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="rating">Rating</label>
+                                <select class="form-control" id="rating" name="rating" required>
+                                    <option value="">Select Rating</option>
+                                    {% for i in "12345" %}
+                                    <option value="{{ i }}">{{ i }} Star{% if i != "1" %}s{% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="review_text">Your Review</label>
+                                <textarea class="form-control" id="review_text" name="review_text" rows="5" required></textarea>
+                            </div>
+                            <div class="form-group text-right">
+                                <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

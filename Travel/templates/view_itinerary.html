@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Tour Itinerary</h4>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="package-info mb-4">
+                        <h5>{{ booking.tour_package.name }}</h5>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ booking.tour_package.location }}
+                            <span class="mx-3">|</span>
+                            <i class="fas fa-calendar me-2"></i>{{ booking.tour_package.duration }} Days
+                        </p>
+                    </div>
+
+                    <div class="timeline">
+                        {% for item in itinerary_items %}
+                            <div class="timeline-item">
+                                <div class="timeline-badge">
+                                    Day {{ item.day_number }}
+                                </div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">{{ item.title }}</h5>
+                                    <p class="timeline-description">{{ item.description }}</p>
+                                    <div class="timeline-activities">
+                                        <h6 class="activities-title">Activities:</h6>
+                                        <ul class="activities-list">
+                                            {% for activity in item.activities.split ', ' %}
+                                                <li><i class="fas fa-check-circle me-2 text-success"></i>{{ activity }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <p class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Note: This itinerary is subject to change based on weather conditions and local circumstances.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15px;
+    height: 100%;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 45px;
+}
+
+.timeline-badge {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    text-align: center;
+    line-height: 32px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    z-index: 1;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.timeline-title {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.timeline-description {
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.activities-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.activities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activities-list li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.package-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+</style>
+{% endblock %}

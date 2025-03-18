@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .alert-header {
+            background-color: #ff4444;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .alert-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+        }
+        .weather-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .weather-item {
+            margin: 10px 0;
+        }
+        .alert-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-header">
+        <h1>⚠️ Weather Alert</h1>
+        <p>Important weather update for your upcoming trip</p>
+    </div>
+    
+    <div class="alert-content">
+        <p>Dear {{ user_name }},</p>
+        
+        <p>We've detected potentially severe weather conditions for your upcoming trip to <strong>{{ destination }}</strong>.</p>
+        
+        <div class="weather-details">
+            <h3>Current Weather Conditions:</h3>
+            <div class="weather-item">
+                <strong>Temperature:</strong> {{ weather.temp }}°C 
+                {% if weather.temp > 35 %}(Extremely Hot){% endif %}
+                {% if weather.temp < 0 %}(Freezing Conditions){% endif %}
+            </div>
+            <div class="weather-item">
+                <strong>Conditions:</strong> {{ weather.description }}
+            </div>
+            {% if weather.wind_speed > 10 %}
+            <div class="weather-item">
+                <strong>Wind Speed:</strong> {{ weather.wind_speed }} m/s (Strong Winds)
+            </div>
+            {% endif %}
+            {% if weather.humidity > 85 %}
+            <div class="weather-item">
+                <strong>Humidity:</strong> {{ weather.humidity }}% (Very Humid)
+            </div>
+            {% endif %}
+            <div class="weather-item">
+                <strong>Visibility:</strong> {{ weather.visibility }} km
+                {% if weather.visibility < 5 %}(Poor Visibility){% endif %}
+            </div>
+        </div>
+
+        <h3>Safety Recommendations:</h3>
+        <ul>
+            {% if weather.temp > 35 %}
+            <li>Stay hydrated and avoid prolonged sun exposure</li>
+            <li>Plan indoor activities during peak heat hours</li>
+            {% endif %}
+            {% if weather.temp < 0 %}
+            <li>Dress in warm, layered clothing</li>
+            <li>Be cautious of icy conditions</li>
+            {% endif %}
+            {% if weather.wind_speed > 10 %}
+            <li>Be careful when outdoors, especially in open areas</li>
+            <li>Check for any weather-related travel advisories</li>
+            {% endif %}
+            {% if weather.visibility < 5 %}
+            <li>Drive carefully and maintain safe distances</li>
+            <li>Check for potential transportation delays</li>
+            {% endif %}
+        </ul>
+
+        <p>We recommend checking the detailed weather forecast before starting your journey:</p>
+        <a href="{{ weather_url }}" class="button">View Detailed Weather</a>
+
+        <div class="alert-footer">
+            <p>This is an automated weather alert. Please monitor local weather updates for the most current information.</p>
+            <p>For any questions about your trip, please contact our support team.</p>
+        </div>
+    </div>
+</body>
+</html>

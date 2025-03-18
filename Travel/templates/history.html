@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>TravelXpert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        img {
+            display: block;
+            margin: auto;
+            border-radius: 5px;
+            width: 200px;
+            height: auto;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        strong {
+            color: #000;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Landmark Detection History</h2>
+        <ul>
+            {% for detection in detections %}
+                <li>
+                    <img src="{{ detection.image.url }}" alt="Landmark">
+                    <p><strong>Detected Landmark:</strong> {{ detection.detected_landmark }}</p>
+                    <p><strong>Date:</strong> {{ detection.detection_date }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/">Upload New Image</a>
+    </div>
+</body>
+</html>

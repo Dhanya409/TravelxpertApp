@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-7 heading-section text-center">
+                <h2>Search Results</h2>
+                {% if search_query.destination or search_query.price_limit %}
+                <p>
+                    {% if search_query.destination %}
+                    Package: "{{ search_query.destination }}"
+                    {% endif %}
+                    {% if search_query.price_limit %}
+                    | Price limit: {{ search_query.price_limit }}
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            {% if tours %}
+                {% for tour in tours %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if tour.image %}
+                        <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.name }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light text-center py-5">
+                            <i class="fas fa-mountain fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title text-primary mb-0">{{ tour.name }}</h5>
+                                <span class="badge bg-primary">₹{{ tour.price }}</span>
+                            </div>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt"></i> {{ tour.location }}
+                            </p>
+                            <p class="card-text">{{ tour.description|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="text-muted small">
+                                    <i class="far fa-clock"></i> {{ tour.duration }} days
+                                </div>
+                                <a href="{% url 'package_detail' tour.id %}" class="btn btn-sm btn-outline-primary">
+                                    View Details <i class="fas fa-chevron-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                        <h4>No tours found</h4>
+                        <p>Try adjusting your search criteria</p>
+                        <a href="{% url 'index' %}" class="btn btn-sm btn-outline-primary mt-3">
+                            <i class="fas fa-search me-2"></i>New Search
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

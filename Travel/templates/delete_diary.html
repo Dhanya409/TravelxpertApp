@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'diary_list' %}" class="text-decoration-none">
+                    <i class="fas fa-book-open me-1"></i>Diaries
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'diary_detail' diary.pk %}" class="text-decoration-none">
+                    {{ diary.title }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Delete</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-transparent">
+            <h2 class="mb-0 text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>Delete Travel Diary
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h4 class="alert-heading">
+                    <i class="fas fa-exclamation-circle me-2"></i>Warning
+                </h4>
+                <p>Are you sure you want to delete the diary "<strong>{{ diary.title }}</strong>"?</p>
+                <hr>
+                <p class="mb-0">This action cannot be undone. All associated images will also be deleted.</p>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Diary Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <strong>Location:</strong> {{ diary.location }}
+                            </p>
+                            <p>
+                                <i class="far fa-calendar text-muted me-2"></i>
+                                <strong>Travel Date:</strong> {{ diary.travel_date|date:"F d, Y" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-images text-muted me-2"></i>
+                                <strong>Images:</strong> {{ diary.images.count }}
+                            </p>
+                            <p>
+                                <i class="far fa-eye text-muted me-2"></i>
+                                <strong>Visibility:</strong>
+                                {% if diary.visibility == 'public' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-globe me-1"></i>Public
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-lock me-1"></i>Private
+                                </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="text-end">
+                    <a href="{% url 'diary_detail' diary.pk %}" class="btn btn-secondary me-2">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Diary
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.breadcrumb-item a {
+    color: var(--bs-primary);
+}
+.breadcrumb-item a:hover {
+    color: var(--bs-primary-darker);
+}
+</style>
+{% endblock %}

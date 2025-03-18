@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 text-white animated slideInDown mb-3">Passenger Details</h1>
+                <nav aria-label="breadcrumb animated slideInDown">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item text-white">{{ package.name }}</li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">{{ flight.airline }} Flight</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow-lg rounded-3 border-0">
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h4 class="card-title mb-0 text-primary">Traveler Information</h4>
+                        <div class="badge bg-primary px-3 py-2">Step 1 of 3</div>
+                    </div>
+
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="bookingForm" novalidate>
+                        {% csrf_token %}
+                        
+                        <div id="passengerForms">
+                            <div class="passenger-form mb-4" data-passenger="1">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="passenger-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">1</div>
+                                    <h5 class="mb-0">Lead Passenger</h5>
+                                </div>
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="full_name_1" name="full_name[]" placeholder="Full Name" required>
+                                            <label for="full_name_1">Full Name *</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="email_1" name="email[]" placeholder="Email" required>
+                                            <label for="email_1">Email Address *</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="tel" class="form-control" id="phone_1" name="phone[]" placeholder="Phone" required>
+                                            <label for="phone_1">Phone Number *</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="age_1" name="age[]" min="0" max="120" placeholder="Age" required>
+                                            <label for="age_1">Age *</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="button" class="btn btn-outline-primary" id="addPassenger">
+                                        <i class="fas fa-user-plus me-2"></i> Add Another Passenger
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-5">
+                            <button type="button" class="btn btn-light btn-lg px-4" onclick="history.back()">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                Continue <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-header {
+    background: linear-gradient(rgba(15, 23, 43, .5), rgba(15, 23, 43, .5)), url('/static/img/header-bg.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.form-floating {
+    position: relative;
+}
+
+.form-floating > .form-control {
+    height: calc(3.5rem + 2px);
+    padding: 1rem 0.75rem;
+}
+
+.form-floating > label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding: 1rem 0.75rem;
+    pointer-events: none;
+    border: 1px solid transparent;
+    transform-origin: 0 0;
+    transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    opacity: .65;
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .hero-header {
+        padding: 3rem 0 !important;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem !important;
+        font-size: 1rem !important;
+    }
+}
+</style>
+
+<script>
+let passengerCount = 1;
+const maxPassengers = 5;
+
+function addPassenger() {
+    if (passengerCount >= maxPassengers) {
+        alert('Maximum ' + maxPassengers + ' passengers allowed per booking');
+        return;
+    }
+    
+    passengerCount++;
+    const newPassengerHtml = `
+        <div class="passenger-form mb-4" data-passenger="${passengerCount}">
+            <div class="d-flex align-items-center mb-4">
+                <div class="passenger-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">${passengerCount}</div>
+                <h5 class="mb-0">Passenger ${passengerCount}</h5>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="full_name_${passengerCount}" name="full_name[]" placeholder="Full Name" required>
+                        <label for="full_name_${passengerCount}">Full Name *</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email_${passengerCount}" name="email[]" placeholder="Email" required>
+                        <label for="email_${passengerCount}">Email Address *</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control" id="phone_${passengerCount}" name="phone[]" placeholder="Phone" required>
+                        <label for="phone_${passengerCount}">Phone Number *</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="age_${passengerCount}" name="age[]" min="0" max="120" placeholder="Age" required>
+                        <label for="age_${passengerCount}">Age *</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-4">
+                <button type="button" class="btn btn-outline-danger" onclick="removePassenger(${passengerCount})">
+                    <i class="fas fa-minus me-2"></i> Remove Passenger
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('passengerForms').insertAdjacentHTML('beforeend', newPassengerHtml);
+}
+
+function removePassenger(number) {
+    const passengerForm = document.querySelector(`div[data-passenger="${number}"]`);
+    if (passengerForm) {
+        passengerForm.remove();
+        passengerCount--;
+    }
+}
+
+document.getElementById('addPassenger').addEventListener('click', addPassenger);
+</script>
+
+{% endblock %}

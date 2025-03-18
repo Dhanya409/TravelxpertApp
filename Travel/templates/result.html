@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TravelXpert</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        img {
+            width: 50%;
+            max-width: 400px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 70%;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .info-box h3 {
+            color: #007BFF;
+            font-size: 22px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .info-box p {
+            font-size: 18px;
+            color: #444;
+            margin: 8px 0;
+        }
+
+        .info-box strong {
+            color: #0056b3;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Landmark Detection Result</h2>
+    <img src="{{ image }}" alt="Uploaded Landmark">
+    
+    <div class="info-box">
+        <h3>Landmark Details</h3>
+        <p><strong>{{ info|linebreaks }}</strong></p>
+    </div>
+
+    <a href="{% url 'upload' %}">Upload Another</a>
+    <a href="{% url 'history' %}" style="margin-left: 10px;">View History</a>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Details</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            color: #333;
+            font-size: 18px;
+            text-decoration: none;
+            margin: 15px;
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            padding: 20px;
+            background-color: #fff;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #444;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 25px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card h3 {
+                font-size: 18px;
+            }
+
+            .card p {
+                font-size: 14px;
+            }
+
+            .btn-primary {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></script>
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <div class="container">
+        <h1>{{ package.name }}</h1>
+        <h2>Inclusions and Exclusions</h2>
+        {% for item in inclusions_exclusions %}
+            <div class="card">
+                <div class="inclusions">
+                    <h3>Inclusions:</h3>
+                    <p>{{ item.inclusions|safe }}</p>
+                </div>
+                <div class="exclusions">
+                    <h3>Exclusions:</h3>
+                    <p>{{ item.exclusions|safe }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

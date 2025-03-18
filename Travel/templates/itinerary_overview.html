@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary Overview</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            object-fit: cover;
+            height: 300px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #343a40;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .card-text {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .text-center {
+            color: #495057;
+        }
+
+        .no-itineraries {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .back-button {
+            font-size: 1.2rem;
+            color: #007bff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar with Back Button and See Services Button -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container">
+            <a href="javascript:history.back()" class="back-button">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+<a href="{% url 'package_service' package_id=tour_package.id %}" class="btn btn-primary">See Services</a>
+
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="text-center">{{ tour_package.name }} - Itinerary Overview</h1>
+        <p class="text-center">{{ tour_package.description }}</p>
+
+        <div class="mt-4">
+            {% for itinerary in itineraries %}
+                <div class="card">
+                    {% if itinerary.image %}
+                        <img src="{{ itinerary.image.url }}" class="card-img-top img-fluid" alt="{{ itinerary.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Day {{ itinerary.day_number }}: {{ itinerary.title }}</h5>
+                        <p class="card-text">{{ itinerary.description }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center no-itineraries">No itineraries available for this package.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

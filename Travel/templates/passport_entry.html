@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% if package %}
+                <li class="breadcrumb-item"><a href="{% url 'passenger_details' package.id %}">Passenger Details</a></li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{% url 'my_bookings' %}">My Bookings</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">Passport Entry</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Passport Details</h3>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="passportForm">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="passport_number" class="form-label">Passport Number *</label>
+                            <input type="text" class="form-control" id="passport_number" name="passport_number" 
+                                   value="{{ passenger.passport_number|default:'' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="passport_file" class="form-label">Upload Passport (PDF/Image) *</label>
+                            <input type="file" class="form-control" id="passport_file" name="passport_file" 
+                                   accept=".pdf,.jpg,.jpeg,.png" required>
+                        </div>
+                    </div>
+                </div>
+
+                {% if passenger.passport_file %}
+                <div class="mb-4">
+                    <h5>Current Passport Status:</h5>
+                    <div class="passport-status p-3 rounded
+                        {% if passenger.passport_verified %}
+                            bg-success text-white
+                        {% elif not passenger.passport_verified and passenger.verification_date %}
+                            bg-danger text-white
+                        {% else %}
+                            bg-warning
+                        {% endif %}">
+                        {% if passenger.passport_verified %}
+                            <i class="fas fa-check-circle"></i> Verified
+                            {% if passenger.verified_by %}
+                            <br>
+                            <small>Verified by: {{ passenger.verified_by.get_full_name }}</small>
+                            <br>
+                            <small>Date: {{ passenger.verification_date|date:"F d, Y H:i" }}</small>
+                            {% endif %}
+                        {% elif not passenger.passport_verified and passenger.verification_date %}
+                            <i class="fas fa-times-circle"></i> Rejected
+                            <br>
+                            <small>Date: {{ passenger.verification_date|date:"F d, Y H:i" }}</small>
+                        {% else %}
+                            <i class="fas fa-clock"></i> Pending Verification
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        {% if passenger.passport_file %}
+                        <i class="fas fa-sync"></i> Update Passport
+                        {% else %}
+                        <i class="fas fa-upload"></i> Upload Passport
+                        {% endif %}
+                    </button>
+                    {% if package %}
+                        <a href="{% url 'passenger_details' package.id %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Passenger Details
+                        </a>
+                    {% else %}
+                        <a href="javascript:history.back()" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Passenger Details
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('passportForm').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('passport_file');
+    const passportNumber = document.getElementById('passport_number');
+    
+    if (!passportNumber.value.trim()) {
+        e.preventDefault();
+        alert('Please enter a passport number');
+        return;
+    }
+    
+    if (fileInput.files.length > 0) {
+        const fileSize = fileInput.files[0].size / 1024 / 1024; // in MB
+        if (fileSize > 5) {
+            e.preventDefault();
+            alert('File size must be less than 5MB');
+            return;
+        }
+        
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+        if (!allowedTypes.includes(fileInput.files[0].type)) {
+            e.preventDefault();
+            alert('Please upload a PDF or image file (JPG/PNG)');
+            return;
+        }
+    }
+});
+</script>
+{% endblock %}

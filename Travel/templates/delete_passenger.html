@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">Delete Passenger</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <h5>Are you sure you want to remove this passenger?</h5>
+                            <p>This action cannot be undone.</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Passenger Details:</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Name:</strong> {{ passenger.full_name }}</li>
+                                <li><strong>Email:</strong> {{ passenger.email }}</li>
+                                <li><strong>Phone:</strong> {{ passenger.phone }}</li>
+                                <li><strong>Age:</strong> {{ passenger.age }}</li>
+                            </ul>
+                        </div>
+
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group text-right">
+                                <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

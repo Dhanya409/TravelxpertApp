@@ -1,0 +1,77 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Passport Verification</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Passenger Information</h4>
+                            <table class="table">
+                                <tr>
+                                    <th>Name:</th>
+                                    <td>{{ passenger.full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>{{ passenger.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Passport Number:</th>
+                                    <td>{{ passenger.passport_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        {% if passenger.passport_verified %}
+                                            <span class="badge bg-success">Verified</span>
+                                        {% elif passenger.verification_date %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Passport Document</h4>
+                            {% if passenger.passport_file %}
+                                {% if passenger.passport_file.url|lower|endswith:'.pdf' %}
+                                    <embed src="{{ passenger.passport_file.url }}" type="application/pdf" width="100%" height="600px">
+                                {% else %}
+                                    <img src="{{ passenger.passport_file.url }}" alt="Passport" class="img-fluid">
+                                {% endif %}
+                            {% else %}
+                                <p class="text-danger">No passport file uploaded</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" name="action" value="verify" class="btn btn-success">
+                                        <i class="fas fa-check"></i> Verify Passport
+                                    </button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Reject Passport
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Verify Passport - {{ passenger.full_name }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h4>Passenger Details</h4>
+                            <table class="table">
+                                <tr>
+                                    <th>Full Name:</th>
+                                    <td>{{ passenger.full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>{{ passenger.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Phone:</th>
+                                    <td>{{ passenger.phone }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date of Birth:</th>
+                                    <td>{{ passenger.date_of_birth }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Passport Number:</th>
+                                    <td>{{ passenger.passport_number }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Passport Document</h4>
+                            {% if passenger.passport_file %}
+                                {% if passenger.passport_file.name|lower|slice:"-4:" == ".pdf" %}
+                                    <embed src="{{ passenger.passport_file.url }}" type="application/pdf" width="100%" height="400px">
+                                {% else %}
+                                    <img src="{{ passenger.passport_file.url }}" alt="Passport" class="img-fluid">
+                                {% endif %}
+                            {% else %}
+                                <p class="text-danger">No passport file uploaded</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form method="post" class="d-flex justify-content-center gap-3">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="verify" class="btn btn-success">
+                                    Verify Passport
+                                </button>
+                                <button type="submit" name="action" value="reject" class="btn btn-danger">
+                                    Reject Passport
+                                </button>
+                                <a href="{% url 'admin:Travel_passenger_changelist' %}" class="btn btn-secondary">
+                                    Back to List
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .card {
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .card-header {
+        background-color: #f8f9fa;
+    }
+    .table th {
+        width: 150px;
+    }
+    .btn {
+        padding: 8px 20px;
+    }
+    .gap-3 {
+        gap: 1rem;
+    }
+</style>
+{% endblock %}

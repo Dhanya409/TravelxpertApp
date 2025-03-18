@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">Weather Check</h1>
+            <p class="lead">Check the weather for any destination</p>
+            
+            <!-- Weather Search Form -->
+            <div class="card shadow-sm mb-5">
+                <div class="card-body p-4">
+                    <form action="{% url 'weather' %}" method="get" class="mb-0">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" name="city" 
+                                   placeholder="Enter city name (e.g., Dubai, Paris)" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary btn-lg" type="submit">
+                                    <i class="fas fa-search"></i> Check Weather
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Destinations -->
+    <h2 class="text-center mb-4">Popular Destinations</h2>
+    <div class="row">
+        {% for city in cities %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h3 class="h5 mb-3">{{ city.name }}, {{ city.country }}</h3>
+                    <a href="{% url 'weather_detail' city.name %}" class="btn btn-outline-primary">
+                        <i class="fas fa-cloud-sun"></i> Check Weather
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Weather Alert Info -->
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="h4 mb-3">Weather Alert System</h3>
+                    <p>Our weather alert system monitors various conditions and sends notifications for:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-thermometer-full text-danger"></i> Extreme temperatures (above 35°C or below 0°C)</li>
+                        <li><i class="fas fa-wind text-primary"></i> Strong winds (above 10 m/s)</li>
+                        <li><i class="fas fa-eye-slash text-warning"></i> Poor visibility (below 5 km)</li>
+                        <li><i class="fas fa-tint text-info"></i> High humidity (above 85%)</li>
+                    </ul>
+                    {% if user.is_authenticated %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> You will receive email alerts for severe weather conditions.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> <a href="{% url 'login' %}">Log in</a> to receive weather alerts via email.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

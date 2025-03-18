@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Tour Package</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .delete-box {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            background-color: rgb(212, 207, 236);
+        }
+        h2 {
+            font-size: 24px;
+        }
+        p {
+            font-size: 18px;
+        }
+        form {
+            display: inline;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="delete-box">
+        <h2>Delete Tour Package</h2>
+        <p>Are you sure you want to delete "{{ tour_package.name }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Yes, delete it</button>
+            <a href="{% url 'admin_tour_package_page' %}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

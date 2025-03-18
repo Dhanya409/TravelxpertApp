@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Customize Your Packing List</h2>
+    
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Trip Types Selection -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Select Your Trip Types</h4>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check custom-checkbox">
+                            <input type="checkbox" class="form-check-input" id="adventure" name="trip_types" value="adventure">
+                            <label class="form-check-label" for="adventure">
+                                <i class="fas fa-hiking"></i> Adventure Trip
+                                <small class="d-block text-muted">Trekking, camping, extreme sports</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="beach" name="trip_types" value="beach">
+                            <label class="form-check-label" for="beach">
+                                <i class="fas fa-umbrella-beach"></i> Beach Trip
+                                <small class="d-block text-muted">Relaxation, water sports</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="business" name="trip_types" value="business">
+                            <label class="form-check-label" for="business">
+                                <i class="fas fa-briefcase"></i> Business Trip
+                                <small class="d-block text-muted">Meetings, conferences</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="family" name="trip_types" value="family">
+                            <label class="form-check-label" for="family">
+                                <i class="fas fa-users"></i> Family Vacation
+                                <small class="d-block text-muted">Kid-friendly activities</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="cultural" name="trip_types" value="cultural">
+                            <label class="form-check-label" for="cultural">
+                                <i class="fas fa-landmark"></i> Cultural & Heritage
+                                <small class="d-block text-muted">Museums, monuments</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="shopping" name="trip_types" value="shopping">
+                            <label class="form-check-label" for="shopping">
+                                <i class="fas fa-shopping-bag"></i> Shopping Trip
+                                <small class="d-block text-muted">Markets, malls</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="religious" name="trip_types" value="religious">
+                            <label class="form-check-label" for="religious">
+                                <i class="fas fa-pray"></i> Religious Trip
+                                <small class="d-block text-muted">Temples, churches</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="solo" name="trip_types" value="solo">
+                            <label class="form-check-label" for="solo">
+                                <i class="fas fa-user"></i> Solo Travel
+                                <small class="d-block text-muted">Independent exploration</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="honeymoon" name="trip_types" value="honeymoon">
+                            <label class="form-check-label" for="honeymoon">
+                                <i class="fas fa-heart"></i> Honeymoon
+                                <small class="d-block text-muted">Romantic getaway</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="wildlife" name="trip_types" value="wildlife">
+                            <label class="form-check-label" for="wildlife">
+                                <i class="fas fa-paw"></i> Wildlife & Nature
+                                <small class="d-block text-muted">Safaris, national parks</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="road_trip" name="trip_types" value="road_trip">
+                            <label class="form-check-label" for="road_trip">
+                                <i class="fas fa-car"></i> Road Trip
+                                <small class="d-block text-muted">Self-drive journey</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="wellness" name="trip_types" value="wellness">
+                            <label class="form-check-label" for="wellness">
+                                <i class="fas fa-spa"></i> Wellness & Retreat
+                                <small class="d-block text-muted">Yoga, meditation</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="festival" name="trip_types" value="festival">
+                            <label class="form-check-label" for="festival">
+                                <i class="fas fa-music"></i> Festival & Events
+                                <small class="d-block text-muted">Concerts, sports events</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="culinary" name="trip_types" value="culinary">
+                            <label class="form-check-label" for="culinary">
+                                <i class="fas fa-utensils"></i> Food & Culinary
+                                <small class="d-block text-muted">Local cuisine, food tours</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Selection -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Weather Conditions</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="hot" name="weather" value="hot" required>
+                            <label class="form-check-label" for="hot">
+                                <i class="fas fa-sun"></i> Hot
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="moderate" name="weather" value="moderate">
+                            <label class="form-check-label" for="moderate">
+                                <i class="fas fa-cloud-sun"></i> Moderate
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="cold" name="weather" value="cold">
+                            <label class="form-check-label" for="cold">
+                                <i class="fas fa-snowflake"></i> Cold
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="rainy" name="weather" value="rainy">
+                            <label class="form-check-label" for="rainy">
+                                <i class="fas fa-cloud-rain"></i> Rainy
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Options -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Additional Options</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="traveling_with_kids" name="traveling_with_kids">
+                    <label class="form-check-label" for="traveling_with_kids">
+                        <i class="fas fa-baby"></i> Traveling with Kids
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="special_requirements"><i class="fas fa-clipboard-list"></i> Special Requirements</label>
+                    <textarea class="form-control" id="special_requirements" name="special_requirements" rows="3" 
+                              placeholder="Any special items or requirements for your trip..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-list-check"></i> Generate Packing List
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .form-check {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-check:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+    }
+    
+    .form-check-input:checked + .form-check-label {
+        color: #0d6efd;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+    }
+    
+    .form-check-label i {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .btn-lg {
+        padding: 1rem 2rem;
+    }
+</style>
+
+<!-- Form Validation Script -->
+<script>
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+{% endblock %}

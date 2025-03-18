@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Cancel Booking</h4>
+                </div>
+                <div class="card-body">
+                    <div class="booking-details mb-4">
+                        <h5>Booking Details</h5>
+                        <p><strong>Package:</strong> {{ booking.tour_package.name }}</p>
+                        <p><strong>Flight:</strong> {{ booking.flight.airline }} - {{ booking.flight.flight_number }}</p>
+                        <p><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</p>
+                        <p><strong>Estimated Refund:</strong> ₹{{ refund_amount }}</p>
+                    </div>
+                    
+                    <div class="cancellation-policy mb-4">
+                        <h5>Cancellation Policy</h5>
+                        <ul>
+                            <li>More than 7 days before departure: 90% refund</li>
+                            <li>3-7 days before departure: 70% refund</li>
+                            <li>1-3 days before departure: 50% refund</li>
+                            <li>Less than 24 hours before departure: 30% refund</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="cancellation_reason">Reason for Cancellation</label>
+                            <textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Back</a>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                Cancel Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

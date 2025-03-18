@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Travel Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .ticket {
+            border: 2px solid #333;
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        .ticket-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .ticket-content {
+            padding: 20px;
+        }
+        .passenger-details {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .passenger-header {
+            background-color: #e9ecef;
+            padding: 10px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 5px 5px 0 0;
+        }
+        .booking-details {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .flight-details {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .barcode {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 2px solid #007bff;
+            border-radius: 0 0 5px 5px;
+            font-size: 0.9em;
+            color: #333;
+        }
+        .footer .contact-info {
+            margin-bottom: 10px;
+        }
+        .footer .social-links {
+            margin: 10px 0;
+        }
+        .footer .social-links a {
+            text-decoration: none;
+            color: #007bff;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        .footer .disclaimer {
+            font-size: 0.8em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="ticket-header">
+            <h1>TravelXpert Booking Confirmation</h1>
+            <p>Booking Reference: {{ booking.booking_id }}</p>
+        </div>
+        
+        <div class="ticket-content">
+            <div class="booking-details">
+                <h2>Booking Information</h2>
+                <table>
+                    <tr>
+                        <th>Tour Package:</th>
+                        <td>{{ booking.tour_package.name }}</td>
+                        <th>Duration:</th>
+                        <td>{{ booking.tour_package.duration }} Days</td>
+                    </tr>
+                    <tr>
+                        <th>Departure:</th>
+                        <td>{{ booking.tour_package.departure_date|date:"F d, Y" }}</td>
+                        <th>Return:</th>
+                        <td>{{ booking.tour_package.return_date|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Amount:</th>
+                        <td>₹{{ booking.total_amount }}</td>
+                        <th>Booking Date:</th>
+                        <td>{{ booking.booking_date|date:"F d, Y" }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="passenger-details">
+                <h2>Passenger Information</h2>
+                {% for passenger in passengers %}
+                <div class="passenger-header">
+                    <h3>Passenger {{ forloop.counter }} {% if passenger.is_lead %}(Lead Passenger){% endif %}</h3>
+                </div>
+                <table>
+                    <tr>
+                        <th>Name:</th>
+                        <td>{{ passenger.name }}</td>
+                        <th>Age:</th>
+                        <td>{{ passenger.age }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender:</th>
+                        <td>{{ passenger.gender }}</td>
+                        <th>ID Type:</th>
+                        <td>{{ passenger.id_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>ID Number:</th>
+                        <td>{{ passenger.id_number }}</td>
+                        <th>Phone:</th>
+                        <td>{{ passenger.phone }}</td>
+                    </tr>
+                    {% if passenger.is_lead %}
+                    <tr>
+                        <th>Email:</th>
+                        <td colspan="3">{{ passenger.email }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                {% endfor %}
+            </div>
+
+            {% if flight_booking %}
+            <div class="flight-details">
+                <h2>Flight Details</h2>
+                <table>
+                    <tr>
+                        <th>Flight Number:</th>
+                        <td>{{ flight_booking.flight.flight_number }}</td>
+                        <th>Airline:</th>
+                        <td>{{ flight_booking.flight.airline }}</td>
+                    </tr>
+                    <tr>
+                        <th>Departure:</th>
+                        <td>{{ flight_booking.flight.departure_city }} ({{ flight_booking.flight.departure_time|date:"H:i" }})</td>
+                        <th>Arrival:</th>
+                        <td>{{ flight_booking.flight.arrival_city }} ({{ flight_booking.flight.arrival_time|date:"H:i" }})</td>
+                    </tr>
+                    <tr>
+                        <th>Class:</th>
+                        <td>{{ flight_booking.seat_class }}</td>
+                        <th>Seats:</th>
+                        <td>{{ flight_booking.number_of_seats }}</td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="barcode">
+                <img src="data:image/png;base64,{{ barcode }}" alt="Booking Barcode">
+            </div>
+
+            <div class="qr-code">
+                <img src="data:image/png;base64,{{ qr_code }}" alt="Booking QR Code">
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="contact-info">
+                <p>Need Assistance? Contact Us:</p>
+                <p>Email: <a href="mailto:support@travelxpert.com">support@travelxpert.com</a> | Phone: +91-XXX-XXX-XXXX</p>
+            </div>
+            <div class="social-links">
+                <p>Follow Us:</p>
+                <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a>
+            </div>
+            <div class="disclaimer">
+                <p>This is an electronically generated ticket and does not require a physical signature.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

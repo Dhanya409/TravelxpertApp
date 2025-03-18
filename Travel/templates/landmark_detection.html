@@ -1,0 +1,98 @@
+% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Landmark Detection</h2>
+                    <p class="text-center text-muted mb-4">Upload an image of a landmark and let AI identify it!</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" id="landmarkForm">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="landmarkImage" class="form-label">Choose Image</label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.image.errors|join:", " }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-search me-2"></i>Analyze Landmark
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if result %}
+                        <div class="mt-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="{{ result.image.url }}" alt="Uploaded Landmark" class="img-fluid rounded shadow">
+                                </div>
+                                <div class="col-md-6">
+                                    <h3>{{ result.landmark_name }}</h3>
+                                    <p class="text-muted">Location: {{ result.location }}</p>
+                                    
+                                    <div class="mb-3">
+                                        <h5>Description</h5>
+                                        <p>{{ result.description }}</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h5>History</h5>
+                                        <p>{{ result.history }}</p>
+                                    </div>
+
+                                    {% if result.confidence_score %}
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Confidence Score: {{ result.confidence_score|floatformat:2 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if user_detections %}
+                <div class="card shadow mt-4">
+                    <div class="card-body">
+                        <h4 class="mb-4">Your Recent Detections</h4>
+                        <div class="row">
+                            {% for detection in user_detections %}
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="{{ detection.image.url }}" class="card-img-top" alt="{{ detection.landmark_name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ detection.landmark_name }}</h5>
+                                            <p class="card-text text-muted">{{ detection.location }}</p>
+                                            <small class="text-muted">Detected on {{ detection.detected_at|date:"M d, Y" }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

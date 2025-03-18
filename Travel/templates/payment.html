@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Booking Summary Card -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="booking-details">
+                        <h6 class="text-primary">Package Details</h6>
+                        <p><strong>Package:</strong> {{ booking.tour_package.name }}</p>
+                        <p><strong>Duration:</strong> {{ booking.tour_package.duration }}</p>
+                        <p><strong>Location:</strong> {{ booking.tour_package.location }}</p>
+                        
+                        <h6 class="text-primary mt-4">Flight Details</h6>
+                        <p><strong>Airline:</strong> {{ booking.flight.airline }}</p>
+                        <p><strong>Flight:</strong> {{ booking.flight.flight_number }}</p>
+                        <p><strong>From:</strong> {{ booking.flight.departure_city }}</p>
+                        <p><strong>To:</strong> {{ booking.flight.arrival_city }}</p>
+                        <p><strong>Date:</strong> {{ booking.flight.departure_date }}</p>
+                        <p><strong>Time:</strong> {{ booking.flight.departure_time }}</p>
+                        
+                        <h6 class="text-primary mt-4">Cost Breakdown</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Package Cost:</td>
+                                <td class="text-end">₹{{ package_cost|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Flight Cost:</td>
+                                <td class="text-end">₹{{ flight_cost|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Taxes (18% GST):</td>
+                                <td class="text-end">₹{{ taxes|floatformat:2 }}</td>
+                            </tr>
+                            <tr class="table-primary">
+                                <th>Total Amount:</th>
+                                <th class="text-end">₹{{ total_amount|floatformat:2 }}</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Form Card -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Payment Details</h5>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'process_payment' booking.id %}" id="paymentForm" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Payment Method Selection -->
+                        <div class="mb-4">
+                            <h6>Select Payment Method</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check payment-method">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="creditCard" value="credit_card" required>
+                                        <label class="form-check-label" for="creditCard">
+                                            <i class="fas fa-credit-card"></i> Credit Card
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check payment-method">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="debitCard" value="debit_card" required>
+                                        <label class="form-check-label" for="debitCard">
+                                            <i class="fas fa-credit-card"></i> Debit Card
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check payment-method">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="upi" value="upi" required>
+                                        <label class="form-check-label" for="upi">
+                                            <i class="fas fa-mobile-alt"></i> UPI
+                                        </label>
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-md-3">
+                                    <div class="form-check payment-method">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="netBanking" value="net_banking" required>
+                                        <label class="form-check-label" for="netBanking">
+                                            <i class="fas fa-university"></i> Net Banking
+                                        </label>
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+                            <div class="invalid-feedback">Please select a payment method</div>
+                        </div>
+
+                        <!-- UPI Form -->
+                        <div id="upiForm" class="payment-form" style="display: none;">
+                            <div class="mb-3">
+                                <label for="upiId" class="form-label">UPI ID</label>
+                                <input type="text" class="form-control" name="upiId" id="upiId" placeholder="username@upi">
+                                <div class="form-text">Enter your UPI ID (e.g., username@upi)</div>
+                                <div class="invalid-feedback">Please enter a valid UPI ID</div>
+                            </div>
+                        </div>
+
+                        <!-- Card Form -->
+                        <div id="cardForm" class="payment-form" style="display: none;">
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" name="cardNumber" 
+                                       placeholder="1234 5678 9012 3456" maxlength="16">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" name="expiryDate" 
+                                           placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="password" class="form-control" id="cvv" name="cvv" 
+                                           placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cardName" class="form-label">Card Holder Name</label>
+                                <input type="text" class="form-control" id="cardName" name="cardName" 
+                                       placeholder="John Doe">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-lock me-2"></i>Pay Securely ₹{{ total_amount|floatformat:2 }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-method {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .payment-method:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    .payment-method i {
+        margin-right: 5px;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentForms = {
+        'credit_card': '#cardForm',
+        'debit_card': '#cardForm',
+        'upi': '#upiForm',
+        'net_banking': '#netBankingForm'
+    };
+
+    // Show/hide payment forms based on selection
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Hide all forms first
+            Object.values(paymentForms).forEach(formId => {
+                const form = document.querySelector(formId);
+                if (form) {
+                    form.style.display = 'none';
+                    // Clear required attributes from hidden forms
+                    form.querySelectorAll('input, select').forEach(input => {
+                        input.required = false;
+                    });
+                }
+            });
+            
+            // Show selected form and set required fields
+            const selectedForm = paymentForms[this.value];
+            if (selectedForm) {
+                const form = document.querySelector(selectedForm);
+                if (form) {
+                    form.style.display = 'block';
+                    // Set required attributes for visible form
+                    form.querySelectorAll('input, select').forEach(input => {
+                        input.required = true;
+                    });
+                }
+            }
+        });
+    });
+
+    // Card number formatting
+    const cardNumber = document.getElementById('cardNumber');
+    if (cardNumber) {
+        cardNumber.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 16) value = value.slice(0, 16);
+            e.target.value = value;
+        });
+    }
+
+    // Expiry date formatting
+    const expiryDate = document.getElementById('expiryDate');
+    if (expiryDate) {
+        expiryDate.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Form validation
+    const form = document.getElementById('paymentForm');
+    form.addEventListener('submit', function(event) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        
+        if (!selectedMethod) {
+            event.preventDefault();
+            alert('Please select a payment method');
+            return;
+        }
+
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            // Show processing state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing...';
+        }
+        
+        form.classList.add('was-validated');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="display-4 mb-3"><i class="fas fa-suitcase-rolling text-primary"></i> Your Travel Checklist</h2>
+        <p class="lead text-muted">Everything you need for a perfect trip</p>
+        {% if is_ai_generated %}
+        <div class="alert alert-info">
+            <i class="fas fa-robot"></i> This packing list was personalized for you using AI technology!
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Trip Information -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white py-3">
+            <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i> Trip Information</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="mb-2">
+                        <i class="fas fa-map-marked-alt text-primary me-2"></i>
+                        <strong>Trip Type:</strong><br>
+                        <span class="ms-4">{{ trip_types|join:", "|title }}</span>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-2">
+                        <i class="fas fa-cloud-sun text-primary me-2"></i>
+                        <strong>Weather:</strong><br>
+                        <span class="ms-4">{{ preferences.weather|title }}</span>
+                    </p>
+                </div>
+                {% if preferences.traveling_with_kids %}
+                <div class="col-md-4">
+                    <p class="mb-2">
+                        <i class="fas fa-child text-primary me-2"></i>
+                        <strong>Traveling with Kids:</strong><br>
+                        <span class="ms-4">Yes</span>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Essential Documents -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white py-3">
+            <h4 class="mb-0"><i class="fas fa-passport me-2"></i> Essential Documents</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for doc in documents_list %}
+                <div class="col-md-6">
+                    <div class="form-check custom-checkbox mb-3">
+                        <input class="form-check-input" type="checkbox" id="doc_{{ forloop.counter }}">
+                        <label class="form-check-label d-flex align-items-center" for="doc_{{ forloop.counter }}">
+                            <i class="fas fa-file-alt text-info me-2"></i>
+                            {{ doc }}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip Specific Items -->
+    {% for category_name, items in selected_items.items %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header {% cycle 'bg-success' 'bg-warning' 'bg-danger' 'bg-info' 'bg-secondary' 'bg-dark' as header_color %} {% if header_color != 'bg-warning' %}text-white{% endif %} py-3">
+            <h4 class="mb-0">
+                {% if 'clothing' in category_name %}
+                    <i class="fas fa-tshirt me-2"></i>
+                {% elif 'electronics' in category_name %}
+                    <i class="fas fa-laptop me-2"></i>
+                {% elif 'toiletries' in category_name %}
+                    <i class="fas fa-pump-soap me-2"></i>
+                {% elif 'baby' in category_name %}
+                    <i class="fas fa-baby me-2"></i>
+                {% elif 'adventure' in category_name %}
+                    <i class="fas fa-hiking me-2"></i>
+                {% elif 'beach' in category_name %}
+                    <i class="fas fa-umbrella-beach me-2"></i>
+                {% elif 'business' in category_name %}
+                    <i class="fas fa-briefcase me-2"></i>
+                {% else %}
+                    <i class="fas fa-list-check me-2"></i>
+                {% endif %}
+                {{ category_name|format_category }}
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for item in items %}
+                <div class="col-md-6">
+                    <div class="form-check custom-checkbox mb-3">
+                        <input class="form-check-input" type="checkbox" id="{{ category_name }}_{{ forloop.counter }}">
+                        <label class="form-check-label d-flex align-items-center" for="{{ category_name }}_{{ forloop.counter }}">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            {{ item }}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Action Buttons -->
+    <div class="text-center mb-5">
+        <button class="btn btn-primary btn-lg me-3 shadow-sm" onclick="window.print()">
+            <i class="fas fa-print me-2"></i> Print Packing List
+        </button>
+        <button class="btn btn-secondary btn-lg shadow-sm" onclick="window.location.href='{% url 'packing_preferences' booking.id %}'">
+            <i class="fas fa-edit me-2"></i> Edit Preferences
+        </button>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .card {
+        border: none;
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .form-check {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-check:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0.3em;
+    }
+    
+    .form-check-input:checked + .form-check-label {
+        color: #198754;
+        text-decoration: line-through;
+    }
+    
+    .form-check-input:checked + .form-check-label i {
+        color: #198754;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        padding-left: 0.5rem;
+    }
+    
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    @media print {
+        .btn, .navbar, .footer {
+            display: none !important;
+        }
+        
+        .card {
+            break-inside: avoid;
+            border: 1px solid #ddd !important;
+            margin-bottom: 1rem !important;
+            box-shadow: none !important;
+        }
+        
+        .card-header {
+            background-color: #f8f9fa !important;
+            color: #000 !important;
+            border-bottom: 1px solid #ddd !important;
+        }
+        
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .form-check-input {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        
+        .form-check-label i {
+            color: #000 !important;
+        }
+        
+        .text-muted {
+            color: #666 !important;
+        }
+        
+        @page {
+            margin: 1cm;
+        }
+    }
+    
+    /* Progress indicator for checked items */
+    .category-progress {
+        height: 4px;
+        background-color: #e9ecef;
+        border-radius: 2px;
+        margin-top: 0.5rem;
+    }
+    
+    .category-progress-bar {
+        height: 100%;
+        background-color: #198754;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<!-- Progress tracking script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.form-check-input');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.checked) {
+                    label.style.textDecoration = 'line-through';
+                    label.style.color = '#198754';
+                } else {
+                    label.style.textDecoration = 'none';
+                    label.style.color = '';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

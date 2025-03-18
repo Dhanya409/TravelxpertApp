@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Flight Booking Details</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Package Details -->
+                    <div class="mb-4">
+                        <h5>Package: {{ package.name }}</h5>
+                        <p class="mb-1"><i class="fas fa-map-marker-alt"></i> Destination: {{ package.location }}</p>
+                        <p><i class="fas fa-calendar-alt"></i> Travel Date: {{ package.start_date|date:"F d, Y" }}</p>
+                    </div>
+
+                    <!-- Flight Details -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Flight Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Airline:</strong> {{ flight.airline }}</p>
+                                <p><strong>Flight Number:</strong> {{ flight.flight_number }}</p>
+                                <p>
+                                    <strong>Departure:</strong><br>
+                                    {{ flight.departure_city }}<br>
+                                    {{ flight.departure_date|date:"F d, Y" }}<br>
+                                    {{ flight.departure_time|time:"H:i" }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Duration:</strong> {{ flight.duration }}</p>
+                                <p><strong>Price:</strong> ₹{{ flight.price }}</p>
+                                <p>
+                                    <strong>Arrival:</strong><br>
+                                    {{ flight.arrival_city }}<br>
+                                    {{ flight.arrival_date|date:"F d, Y" }}<br>
+                                    {{ flight.arrival_time|time:"H:i" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers Details -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Passengers Information</h5>
+                        {% for passenger in passengers %}
+                        <div class="passenger-card mb-3 p-3 border rounded">
+                            <h6 class="text-primary">Passenger {{ forloop.counter }}</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Name:</strong> {{ passenger.full_name }}</p>
+                                    <p class="mb-2"><strong>Email:</strong> {{ passenger.email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Phone:</strong> {{ passenger.phone }}</p>
+                                    <p class="mb-2"><strong>Age:</strong> {{ passenger.age }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Price Summary</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p>Flight Price per Person: ₹{{ flight.price }}</p>
+                                <p>Number of Passengers: {{ passengers|length }}</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                {% with passenger_count=passengers|length %}
+                                    {% with total=flight.price|multiply:passenger_count %}
+                                        <h5 class="text-primary">Total: ₹{{ total }}</h5>
+                                        <input type="hidden" name="total_amount" value="{{ total }}">
+                                    {% endwith %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booking Form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Select Seat Class</label>
+                            {{ form.seat_class }}
+                            {% if form.seat_class.errors %}
+                                <div class="alert alert-danger mt-2">{{ form.seat_class.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+    }
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    .card-header {
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .border-bottom {
+        border-bottom: 2px solid #e9ecef !important;
+    }
+    .passenger-card {
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    .passenger-card:hover {
+        background-color: #fff;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+</style>
+{% endblock %}
